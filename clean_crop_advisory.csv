@@ -1,0 +1,16 @@
+python model_training.pycrop,season,soil_type,temp_range,rainfall,ph_range,water_need
+rice,kharif,clayey,20-35°c,120-200cm,5.5-6.5,high
+wheat,rabi,loamy,10-25°c,50-100cm,6.0-7.5,medium
+maize,kharif,loamy,18-27°c,60-110cm,5.5-7.0,medium
+cotton,kharif,black,21-30°c,50-100cm,6.0-8.0,medium
+sugarcane,annual,alluvial,20-35°c,75-150cm,6.0-7.5,high
+gram,rabi,sandy loam,20-25°c,40-60cm,6.0-7.0,low
+barley,rabi,loamy,12-25°c,30-60cm,6.0-7.5,low
+mustard,rabi,alluvial,10-25°c,25-40cm,6.0-7.5,low
+groundnut,kharif,sandy,20-30°c,50-75cm,6.0-7.0,medium
+soybean,kharif,loamy,20-30°c,60-100cm,6.0-7.5,medium
+sunflower,zaid,loamy,18-30°c,50-75cm,6.0-7.5,low
+potato,rabi,loamy,15-25°c,50-75cm,5.5-6.5,medium
+tomato,all,loamy,18-27°c,60-80cm,6.0-6.8,medium
+onion,rabi,loamy,13-24°c,50-70cm,6.0-7.0,medium
+chilli,kharif,loamy,20-30°c,60-90cm,6.0-7.0,medium

@@ -1,0 +1,22 @@
+temperature,humidity,moisture,soil_type,crop_type,nitrogen,phosphorous,potassium,fertilizer
+26,52,38,loamy,rice,90,42,43,urea
+27,55,40,loamy,rice,85,40,45,urea
+25,60,42,clayey,rice,88,38,40,dap
+30,65,35,black,cotton,70,35,35,npk
+29,68,33,black,cotton,72,34,38,npk
+28,70,30,black,cotton,68,36,36,super phosphate
+22,50,28,sandy,wheat,40,20,20,ammonium sulphate
+20,48,25,sandy,wheat,38,22,18,urea
+21,45,26,sandy,wheat,42,18,20,dap
+27,60,34,loamy,maize,60,30,30,npk
+26,62,36,loamy,maize,62,28,32,urea
+28,58,33,loamy,maize,58,32,34,dap
+31,72,45,alluvial,sugarcane,80,40,40,npk
+32,70,48,alluvial,sugarcane,85,42,42,urea
+30,74,50,alluvial,sugarcane,78,38,39,dap
+24,55,30,sandy loam,gram,20,20,15,super phosphate
+23,58,28,sandy loam,gram,22,18,17,dap
+25,53,27,sandy loam,gram,18,22,16,urea
+19,65,20,loamy,barley,35,20,20,npk
+18,60,18,loamy,barley,30,18,22,urea
+21,62,22,loamy,barley,33,19,21,dap
