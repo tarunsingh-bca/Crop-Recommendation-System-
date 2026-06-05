@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farmer Portal - Login</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), 
+                        url('https://images.unsplash.com/photo-1500937386664-56d1dfef3854?q=80&w=2070') no-repeat center center fixed;
+            background-size: cover;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .login-card {
+            background: #fdfdfd;
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            box-sizing: border-box;
+        }
+        .login-card h2 {
+            color: #1e5622;
+            font-size: 28px;
+            margin-bottom: 30px;
+            font-weight: 700;
+        }
+        .input-group {
+            margin-bottom: 20px;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            box-sizing: border-box;
+            transition: all 0.3s;
+        }
+        .input-group input:focus {
+            outline: none;
+            border-color: #1e5622;
+        }
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            background-color: #1e5622;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            text-transform: uppercase;
+            margin-top: 10px;
+        }
+        .btn-submit:hover {
+            background-color: #153d18;
+        }
+        .toggle-link {
+            margin-top: 25px;
+            display: block;
+            color: #2b2b2b;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .toggle-link:hover {
+            text-decoration: underline;
+        }
+        .message-box {
+            margin-top: 15px;
+            font-size: 14px;
+            font-weight: 500;
+            display: none;
+            word-wrap: break-word;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-card">
+        <h2 id="form-title">Farmer Portal</h2>
+        
+        <form id="authForm">
+            <div class="input-group">
+                <input type="text" id="username" placeholder="Username" required>
+            </div>
+            <div class="input-group">
+                <input type="password" id="password" placeholder="Password" required>
+            </div>
+            
+            <button type="submit" id="submitBtn" class="btn-submit">Login</button>
+        </form>
+
+        <div id="message" class="message-box"></div>
+        <a id="toggleAuth" class="toggle-link" data-action="login">Register New Account</a>
+    </div>
+
+    <script>
+        const authForm = document.getElementById('authForm');
+        const formTitle = document.getElementById('form-title');
+        const submitBtn = document.getElementById('submitBtn');
+        const toggleAuth = document.getElementById('toggleAuth');
+        const messageBox = document.getElementById('message');
+
+        toggleAuth.addEventListener('click', () => {
+            const currentAction = toggleAuth.getAttribute('data-action');
+            messageBox.style.display = 'none';
+            if (currentAction === 'login') {
+                formTitle.innerText = "Create Account";
+                submitBtn.innerText = "Register";
+                toggleAuth.innerText = "Already have an account? Login";
+                toggleAuth.setAttribute('data-action', 'register');
+            } else {
+                formTitle.innerText = "Farmer Portal";
+                submitBtn.innerText = "Login";
+                toggleAuth.innerText = "Register New Account";
+                toggleAuth.setAttribute('data-action', 'login');
+            }
+        });
+
+        authForm.addEventListener('submit', function(e) {
+            e.preventDefault(); 
+            
+            const userVal = document.getElementById('username').value;
+            const passVal = document.getElementById('password').value;
+            const actionType = toggleAuth.getAttribute('data-action') === 'login' ? 'login' : 'register';
+
+            submitBtn.innerText = "Processing...";
+            submitBtn.disabled = true;
+            messageBox.style.display = 'none';
+
+            // Point directly to the explicit domain origin running the server
+            const targetUrl = window.location.origin + '/auth';
+
+            fetch(targetUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    user: userVal,
+                    pass: passVal,
+                    type: actionType
+                })
+            })
+            .then(res => {
+                if (!res.ok) throw new Error(`HTTP Error Status: ${res.status}`);
+                return res.json();
+            })
+            .then(data => {
+                submitBtn.disabled = false;
+                submitBtn.innerText = actionType === 'login' ? 'Login' : 'Register';
+
+                if (data.success) {
+                    if (actionType === 'login') {
+                        window.location.href = window.location.origin + data.redirect;
+                    } else {
+                        messageBox.style.color = "green";
+                        messageBox.innerText = data.msg;
+                        messageBox.style.display = "block";
+                        authForm.reset();
+                        toggleAuth.click(); 
+                    }
+                } else {
+                    messageBox.style.color = "red";
+                    messageBox.innerText = data.msg;
+                    messageBox.style.display = "block";
+                }
+            })
+            .catch(err => {
+                submitBtn.disabled = false;
+                submitBtn.innerText = actionType === 'login' ? 'Login' : 'Register';
+                messageBox.style.color = "red";
+                messageBox.innerText = `Connection Failed. Error details: ${err.message}. Ensure the Flask terminal is active.`;
+                messageBox.style.display = "block";
+                console.error("API error details:", err);
+            });
+        });
+    </script>
+</body>
+</html>

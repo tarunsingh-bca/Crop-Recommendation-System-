@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartCrop AI Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root { --primary: #2ecc71; --dark: rgba(0,0,0,0.7); }
+        body {
+            background: linear-gradient(var(--dark), var(--dark)), url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1920&q=80');
+            background-size: cover; background-position: center; background-attachment: fixed;
+            transition: background 1.5s ease; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh; display: flex; align-items: center; justify-content: center; margin: 0;
+        }
+        .card { display: none; background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(15px); border-radius: 24px; width: 100%; max-width: 450px; padding: 40px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.2); }
+        .active { display: block !important; animation: fadeIn 0.6s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        .btn-success { background: #1a531b; border: none; padding: 12px; border-radius: 12px; font-weight: 700; font-size: 1.1rem; }
+        .btn-success:hover { background: #144115; }
+        .res-item { background: #f8f9fa; border-left: 6px solid #2ecc71; padding: 15px; border-radius: 12px; margin-bottom: 15px; }
+        h2 { color: #1a531b; font-weight: 800; }
+    </style>
+</head>
+<body>
+
+    <div id="step0" class="card active text-center">
+        <h2 class="mb-4">Farmer Portal</h2>
+        <input type="text" id="u" class="form-control mb-3 p-3" placeholder="Username">
+        <input type="password" id="p" class="form-control mb-4 p-3" placeholder="Password">
+        <button class="btn btn-success w-100 mb-3" onclick="handleAuth('login')">LOGIN</button>
+        <button class="btn btn-link w-100 text-dark text-decoration-none fw-bold" onclick="handleAuth('register')">Register New Account</button>
+    </div>
+
+    <div id="step1" class="card">
+        <h3 class="mb-4 text-center fw-bold" style="color:#1a531b">Farm Data</h3>
+        <label class="small fw-bold text-muted">Temperature (°C)</label><input type="number" id="temp" class="form-control mb-3" value="30">
+        <label class="small fw-bold text-muted">Rainfall (mm)</label><input type="number" id="rain" class="form-control mb-3" value="120">
+        <label class="small fw-bold text-muted">Soil Category</label>
+        <select id="soil" class="form-select mb-4">
+            <option value="black">Black Soil</option>
+            <option value="sandy">Sandy Soil</option>
+            <option value="loamy">Loamy Soil</option>
+            <option value="clayey">Clayey Soil</option>
+            <option value="red">Red Soil</option>
+        </select>
+        <button class="btn btn-success w-100" onclick="runPrediction()">GET AI REPORT</button>
+    </div>
+
+    <div id="step2" class="card">
+        <h3 class="mb-4 text-center fw-bold" style="color:#1a531b">AI Recommendations</h3>
+        <div id="resultsArea"></div>
+        <button class="btn btn-outline-dark w-100 mt-3 fw-bold" onclick="location.reload()">REFRESH SYSTEM</button>
+    </div>
+
+    <script>
+        function showStep(s) {
+            document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
+            document.getElementById('step' + s).classList.add('active');
+        }
+
+        async function handleAuth(type) {
+            const user = document.getElementById('u').value;
+            const pass = document.getElementById('p').value;
+            if(!user || !pass) return alert("Please fill details!");
+
+            const res = await fetch('/auth', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({user, pass, type})
+            }).then(r => r.json());
+
+            if(res.success) {
+                if(type === 'login') showStep(1);
+                else alert(res.msg); // Alert for Registration Success
+            } else alert(res.msg);
+        }
+
+        async function runPrediction() {
+            const res = await fetch('/predict', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    temp: document.getElementById('temp').value,
+                    rain: document.getElementById('rain').value,
+                    soil: document.getElementById('soil').value
+                })
+            }).then(r => r.json());
+
+            if(res.success) {
+                let html = '';
+                res.results.forEach(i => {
+                    html += `<div class="res-item"><h5 class="fw-bold text-success mb-1">${i.crop}</h5><p class="mb-1 small"><b>Fertilizer:</b> ${i.fert}</p><span class="text-muted small">Market Rate: ${i.price}</span></div>`;
+                });
+                document.getElementById('resultsArea').innerHTML = html;
+                showStep(2);
+            }
+        }
+    </script>
+</body>
+</html>
